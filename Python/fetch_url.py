@@ -24,5 +24,6 @@ def fetch_url(url):
     except Exception,e:
         print e
 
+
 if __name__ == '__main__':
-    print fetch_url('http://www.baidu.com')
+    print fetch_url('http://www.baidu.com').decode('utf-8','ignore').encode('utf-8') #编码转换的方法
