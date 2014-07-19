@@ -4,6 +4,7 @@ import urllib2
 import gzip
 import StringIO
 
+#urllib2抓取网页时，有时候响应体是gzip压缩的，所以需要处理一下
 def fetch_url(url):
     try:
         request = urllib2.Request(url)
