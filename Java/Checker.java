@@ -70,7 +70,7 @@ public abstract  class Checker  implements Observer {
             SyncConstants.JOB_NAME_SPLIT+//|分隔符
                 udcScgHiveTableDO.getTableName();//表名
             jobName = this.appendParams(jobName,udcScgHiveTableDO);//产出jobName
-            long jobId = this.insertBasicJobList(jobName,1);//首先插入基本信息的job
+            long jobId = this.insertBasicJobList(jobName,1,udcScgHiveTableDO.getTableType());//首先插入基本信息的job
             if(jobId>0){
                  this.addXmlToJob(jobName,jobId,udcScgHiveTableDO);//添加XML到JOB
                  return jobId;
@@ -90,7 +90,7 @@ public abstract  class Checker  implements Observer {
      */
     public long addJobList(String jobName){
         try {
-            long jobId = this.insertBasicJobList(jobName,2); //这里先插入到jobList中保证http请求不因异常遗漏
+            long jobId = this.insertBasicJobList(jobName,2,-1); //这里先插入到jobList中保证http请求不因异常遗漏
             if(jobId>0){
                 String hiveTable = CloudSyncUtil.getHiveTableByJobName(jobName);
                 UdcScgHiveTableDO udcScgHiveTableDO = new UdcScgHiveTableDO();
@@ -99,6 +99,14 @@ public abstract  class Checker  implements Observer {
                 if(CollectionUtil.isNotEmpty(udcScgHiveTableDOList)){
                     this.addXmlToJob(jobName,jobId, udcScgHiveTableDOList.get(0));  //添加XML到JOB
                 }
+                
+                UdcJobListDO udcJobListDO = new UdcJobListDO();
+                udcJobListDO.setJobid(jobId);
+                if(udcScgHiveTableDOList.get(0).getTableType() == SyncConstants.ScgHiveTableTableType.yun2Table.getTableType())
+                    udcJobListDO.setJobType("datax-yun2");
+                else
+                    udcJobListDO.setJobType("datax");
+                udcJobListDAO.updateUdcJobList(udcJobListDO);
             }
             return jobId;
         } catch (Exception e) {
@@ -186,13 +194,19 @@ public abstract  class Checker  implements Observer {
      * @return jobId 任务Id
      * @throws DAOException
      */
-    private long insertBasicJobList(String jobName,int jobType) throws DAOException{
+    private long insertBasicJobList(String jobName,int jobType,int tableType) throws DAOException{
         UdcJobListDO udcJobListDO = new UdcJobListDO();
         udcJobListDO.setJobName(jobName);
         if(jobType==2){
             udcJobListDO.setJobStatus(0);
         }
-        udcJobListDO.setJobType("datax");
+        if(tableType==SyncConstants.ScgHiveTableTableType.yun2Table.getTableType()){
+            udcJobListDO.setJobType("datax-yun2");
+        }
+        else{
+            udcJobListDO.setJobType("datax");
+        }
+//      udcJobListDO.setJobType("datax");
         udcJobListDO.setResourceGroup("udc_datax");
         List<UdcJobListDO> udcJobListDOList = udcJobListDAO.queryUdcJobList(udcJobListDO);
         if(CollectionUtil.isNotEmpty(udcJobListDOList)&&udcJobListDOList.size()>0){
@@ -201,8 +215,6 @@ public abstract  class Checker  implements Observer {
         udcJobListDO.setJobStatus(0);//scan出来的job 在这里也加入状态
         return udcJobListDAO.insertUdcJobList(udcJobListDO);
     }
-    
-    
     
 
     //重写equals 方法,为了在添加观察者的时候去重
