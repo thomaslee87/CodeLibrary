@@ -49,5 +49,14 @@ for book in books:
 
     注：注意redis的持久化方法
 
++ *Redis的数据类型*
 
-> redis常用来做缓存，但还有很多[其他的应用场景](http://os.51cto.com/art/201107/278292.htm)
+---
+
+[Redis数据类型](http://www.cnblogs.com/guanjinke/archive/2013/01/21/2870576.html)
+
+
+> 注意：redis常用来做缓存，但还有很多[其他的应用场景](http://os.51cto.com/art/201107/278292.htm)
+
+
+
