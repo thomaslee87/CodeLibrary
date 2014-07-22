@@ -4,13 +4,13 @@
 
 ubuntu下安装：`sudo apt-get install redis-server`
 
->python redis安装：`sudo apt-get install python-redis`
+python redis安装：`sudo apt-get install python-redis`
 
 ----
 
-+python api用法+
++ *python api用法*
 
-----
+---
 
 ```python
 #!/usr/bin/python
@@ -33,17 +33,17 @@ for book in books:
     redis.set(book_id, 1)
 ```
 
-+命令行+
++ *命令行*
 
-----
+---
 
 [redis-cli命令](http://blog.csdn.net/yhl27/article/details/9936189)
 
     注：keys命令可以查看key的情况，可以使用*做通配符，如keys a*
 
-+配置信息+
++ *配置信息*
 
-----
+---
 
 [redis配置详解](http://www.cnblogs.com/wenanry/archive/2012/02/26/2368398.html)
 
